@@ -25,7 +25,11 @@ export class UsersService {
     role,
   }: CreateAccountInput): Promise<{ ok: boolean; error?: string }> {
     try {
-      const exists = await this.users.findOneBy({ email });
+      // const exists = await this.users.findOneBy({ email });
+      const exists = await this.users.findOne({
+        where: { email },
+        select: ['email'],
+      });
       if (exists) {
         return { ok: false, error: 'There is a user with that email already' };
       }
