@@ -3,6 +3,7 @@ import {
   Module,
   NestModule,
   RequestMethod,
+  Res,
 } from '@nestjs/common';
 import * as Joi from 'joi';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -15,6 +16,9 @@ import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { Category } from './restaurants/entities/category.entity';
+import { RestaurantsModule } from './restaurants/restaurants.module';
 
 @Module({
   imports: [
@@ -23,7 +27,7 @@ import { MailModule } from './mail/mail.module';
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod').required(),
+        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
@@ -51,9 +55,10 @@ import { MailModule } from './mail/mail.module';
 
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
-      entities: [User, Verification],
+      entities: [User, Verification, Restaurant, Category],
     }),
     UsersModule,
+    RestaurantsModule,
     JwtModule.forRoot({
       privateKey: process.env.TOKEN_SECRET,
     }),
